@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>记录点滴-DreamLife | mywork | 一些小感悟,挤出时间做做技术总结和记录</title>
+		<meta name="keywords" content="front_end,frondEnd,前端,技术,感悟,杂谈，web前端开发, 前端开发工程师, 前端资源, CSS, JavaScript, Ajax, jQuery, html,html5,css3,浏览器兼容, 前端开发工具, jQuery,JS,HTML" />
+		<meta name="description" content="一些小感悟,挤出时间做做技术总结和记录" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta name="renderer" content="webkit|ie-comp|ie-stand">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<link rel="stylesheet" href="static/css/font.css">
+		<link rel="stylesheet" href="static/css/index.css">
+	</head>
+	<body>
+		<div class="wrap">
+			<header>
+				<a href="index.html">返回首页</a>
+			</header>
+			<div class="main inner">
+				<div class="title">Node.Js 爬虫记录</div>
+				<div class="pageinfo">
+					<span>发表时间: 2016-09-23 11:13</span>
+				</div>
+
+				<h3>抓包代码</h3>
+				<div class="codehilite"><pre><span></span><span class="cm">/**</span>
+<span class="cm"> * Created by hockor on 16/8/22.</span>
+<span class="cm"> */</span><span class="w"></span>
+var<span class="w"> </span>express<span class="w"> </span><span class="o">=</span><span class="w"> </span>require<span class="o">(</span><span class="s">&quot;express&quot;</span><span class="o">)</span><span class="err">;</span><span class="w"></span>
+var<span class="w"> </span>app<span class="w"> </span><span class="o">=</span><span class="w"> </span>express<span class="o">()</span><span class="err">;</span><span class="w"></span>
+var<span class="w"> </span>superagent<span class="w"> </span><span class="o">=</span><span class="w"> </span>require<span class="o">(</span><span class="s">&quot;superagent&quot;</span><span class="o">)</span><span class="err">;</span><span class="w"></span>
+var<span class="w"> </span>cheerio<span class="w"> </span><span class="o">=</span><span class="w"> </span>require<span class="o">(</span><span class="s">&quot;cheerio&quot;</span><span class="o">)</span><span class="err">;</span><span class="w"></span>
+var<span class="w"> </span>fs<span class="w"> </span><span class="o">=</span><span class="w"> </span>require<span class="o">(</span><span class="s">&quot;fs&quot;</span><span class="o">)</span><span class="err">;</span><span class="w"></span>
+var<span class="w"> </span>gbk<span class="w"> </span><span class="o">=</span><span class="w"> </span>require<span class="o">(</span><span class="s">&#39;gbk&#39;</span><span class="o">)</span><span class="err">;</span><span class="w"></span>
+
+
+app<span class="o">.</span>get<span class="o">(</span><span class="s">&#39;/&#39;</span><span class="o">,</span><span class="w"> </span>function<span class="w"> </span><span class="o">(</span>req<span class="o">,</span><span class="w"> </span>res<span class="o">,</span><span class="w"> </span>next<span class="o">)</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">    </span><span class="o">//</span><span class="w"> </span><span class="err">用</span><span class="w"> </span>superagent<span class="w"> </span><span class="err">去抓取</span><span class="w"> </span><span class="nl">https</span><span class="o">://</span>cnodejs<span class="o">.</span>org<span class="o">/</span><span class="w"> </span><span class="err">的内容</span><span class="w"></span>
+<span class="w">    </span>superagent<span class="o">.</span>get<span class="o">(</span><span class="s">&#39;https://cnodejs.org/&#39;</span><span class="o">)</span><span class="w"></span>
+<span class="w">        </span><span class="o">.</span><span class="kr">end</span><span class="o">(</span>function<span class="w"> </span><span class="o">(</span>err<span class="o">,</span><span class="w"> </span>sres<span class="o">)</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">            </span><span class="o">//</span><span class="w"> </span><span class="err">常规的错误处理</span><span class="w"></span>
+<span class="w">            </span><span class="kr">if</span><span class="w"> </span><span class="o">(</span>err<span class="o">)</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">                </span><span class="kr">return</span><span class="w"> </span>next<span class="o">(</span>err<span class="o">)</span><span class="err">;</span><span class="w"></span>
+<span class="w">            </span><span class="err">}</span><span class="w"></span>
+
+<span class="w">            </span><span class="o">//</span><span class="w"> </span>sres<span class="o">.</span>text<span class="w"> </span><span class="err">里面存储着网页的</span><span class="w"> </span>html<span class="w"> </span><span class="err">内容，将它传给</span><span class="w"> </span>cheerio<span class="o">.</span>load<span class="w"> </span><span class="err">之后</span><span class="w"></span>
+<span class="w">            </span><span class="o">//</span><span class="w"> </span><span class="err">就可以得到一个实现了</span><span class="w"> </span>jquery<span class="w"> </span><span class="err">接口的变量，我们习惯性地将它命名为</span><span class="w"> </span><span class="err">`$`</span><span class="w"></span>
+<span class="w">            </span><span class="o">//</span><span class="w"> </span><span class="err">剩下就都是</span><span class="w"> </span>jquery<span class="w"> </span><span class="err">的内容了</span><span class="w"></span>
+<span class="w">            </span>var<span class="w"> </span><span class="err">$</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>cheerio<span class="o">.</span>load<span class="o">(</span>sres<span class="o">.</span>text<span class="o">)</span><span class="err">;</span><span class="w"></span>
+<span class="w">            </span>var<span class="w"> </span>items<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">[];</span><span class="w"></span>
+<span class="w">            </span><span class="err">$</span><span class="o">(</span><span class="s">&#39;#topic_list .cell&#39;</span><span class="o">).</span>each<span class="o">(</span>function<span class="w"> </span><span class="o">(</span>idx<span class="o">,</span><span class="w"> </span>element<span class="o">)</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">                </span>var<span class="w"> </span><span class="err">$</span>element<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">$</span><span class="o">(</span>element<span class="o">)</span><span class="err">;</span><span class="w"></span>
+<span class="w">                </span>items<span class="o">.</span><span class="kr">push</span><span class="o">(</span><span class="err">{</span><span class="w"></span>
+<span class="w">                    </span><span class="nl">title</span><span class="o">:</span><span class="w"> </span><span class="err">$</span>element<span class="o">.</span>find<span class="o">(</span><span class="s">&quot;.topic_title&quot;</span><span class="o">).</span>attr<span class="o">(</span><span class="s">&#39;title&#39;</span><span class="o">),</span><span class="w"></span>
+<span class="w">                    </span><span class="nl">href</span><span class="o">:</span><span class="w"> </span><span class="err">$</span>element<span class="o">.</span>find<span class="o">(</span><span class="s">&quot;.topic_title&quot;</span><span class="o">).</span>attr<span class="o">(</span><span class="s">&#39;href&#39;</span><span class="o">),</span><span class="w"></span>
+<span class="w">                    </span><span class="nl">name</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="err">$</span>element<span class="o">.</span>find<span class="o">(</span><span class="s">&quot;img&quot;</span><span class="o">).</span>attr<span class="o">(</span><span class="s">&quot;title&quot;</span><span class="o">)</span><span class="w"></span>
+<span class="w">                </span><span class="err">}</span><span class="o">)</span><span class="err">;</span><span class="w"></span>
+<span class="w">            </span><span class="err">}</span><span class="o">)</span><span class="err">;</span><span class="w"></span>
+
+<span class="w">            </span>res<span class="o">.</span>send<span class="o">(</span>items<span class="o">)</span><span class="err">;</span><span class="w"></span>
+<span class="w">        </span><span class="err">}</span><span class="o">)</span><span class="err">;</span><span class="w"></span>
+<span class="err">}</span><span class="o">)</span><span class="err">;</span><span class="w"></span>
+
+app<span class="o">.</span>listen<span class="o">(</span><span class="m">3000</span><span class="o">)</span><span class="w"></span>
+</pre></div>
+
+				<p>Express就不用说了，方便代替我们的HTTP服务器。</p>
+				<p>superagent(http://visionmedia.github.io/superagent/ ) 是个 http 方面的库，可以发起 get 或 post 请求。</p>
+				<p>cheerio(https://github.com/cheeriojs/cheerio ) 大家可以理解成一个 Node.js 版的 jquery，用来从网页中以 css selector 取数据，使用方式跟 jquery 一样一样的。</p>
+				<h3>GBK乱码问题</h3>
+				<p>以上我们抓取的页面是一个常规的utf8页面，但是在实际中还是有许多的页面是常见的GBK编码，这个时候抓取下来就是一个乱码的文案了。这时候就需要用到 npm gbk来处理了。</p>
+				<div class="codehilite">
+					<pre><span></span>var fs = require(&quot;fs&quot;);
+var gbk = require(&#39;gbk&#39;);
+gbk.fetch(&quot;http://xqn.163.com/index.html&quot;).to(&quot;string&quot;,function (err,string) {
+    if(err){
+        console.log(err)
+    }
+    fs.writeFile(&#39;./1.txt&#39;,string,function (err,res) {
+        if(err){
+            console.log(err)
+        }
+        console.log(&quot;ok&quot;)
+    })
+});
+</pre>
+				</div>
+
+				<p>这里我选择的是GBK这个组件。使用简单
+					<a href="https://www.npmjs.com/package/gbk">npm地址</a>
+				</p>
+				<p>但是在实际使用中我发现作者早在5个月前就fix得一个bug，npm官网down下来竟然还是没修复，具体修改方式参见
+					<a href="https://github.com/guo-yu/gbk">作者git</a>.有点略坑啊。。。</p>
+
+			</div>
+
+			<footer>
+				<div class="copyright">© 2015 -<span itemprop="copyrightYear">2016</span> | <span class="author" itemprop="copyrightHolder">blackweater</span>
+				</div>
+			</footer>
+	</body>
+
+</html>

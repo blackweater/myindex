@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>记录点滴-DreamLife | mywork | 一些小感悟,挤出时间做做技术总结和记录</title>
+		<meta name="keywords" content="front_end,frondEnd,前端,技术,感悟,杂谈，web前端开发, 前端开发工程师, 前端资源, CSS, JavaScript, Ajax, jQuery, html,html5,css3,浏览器兼容, 前端开发工具, jQuery,JS,HTML" />
+		<meta name="description" content="一些小感悟,挤出时间做做技术总结和记录" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta name="renderer" content="webkit|ie-comp|ie-stand">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<link rel="stylesheet" href="static/css/font.css">
+		<link rel="stylesheet" href="static/css/index.css">
+	</head>
+	<body>
+<div class="wrap">
+	<header>
+		<a href="index.html">返回首页</a>
+	</header>
+	<div class="main inner">
+		<div class="title">overflow的一些小问题</div>
+		<div class="pageinfo">
+			<span>发表时间: 2015-10-13 12:15</span>
+		</div>
+
+		<h2>overflow-x和overf-y同时使用的问题</h2>
+		<p>如果overflow-x和overflow-y二者的值相同，等同于overflow； 如果二者值不同，其中一个被赋予visible；另一个被赋予auto，hidden，scroll，其中visible会被重置为auto。</p>
+		<h2>table中的问题</h2>
+		<p>table中td设置尺寸和overflow:hidden不起作用，此时需要table为table-layout:fixed;才会起作用</p>
+		<h2>IE7下的button padding问题</h2>
+		<p><img alt="" src="http://img.mukewang.com/550291e000017ef412000530.jpg" /></p>
+		<h1>overflow:scroll的出现</h1>
+		<p>所有的scroll均是来自于html，不是body。证明就是body本省是有.5em的的margin。可是滚动条确实贴着html的。</p>
+		<h2>ie7及以下</h2>
+		<p>默认右侧始终有一个scroll的条。即使你的内容一个字没写。所以他的默认css的overflow-y:scroll</p>
+		<h2>IE8+</h2>
+		<p>默认是overflow：auto</p>
+		<h2>chrome和其他浏览器</h2>
+		<p>在这里，奇葩的是chrome了。<br /> chrome下获取滚动高度是document.body.scrollTop，
+			<br /> 而其他的是document.documentElement.scrollTop，
+			<br /> 所以推荐的兼容写法是：
+		</p>
+		<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">scrollTop</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">scrollTop</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">scrollTop</span><span class="p">);</span>
+</pre></div>
+
+		<h2>padding-bottom缺失</h2>
+		<p>在非chrome浏览器中。如果滚动区域写了上下padding,那么padding-bottom会缺失</p>
+		<h2>滚动条导致布局问题</h2>
+		<p>滚动条是会占据宽度的，所以最好是把宽度预留足够。</p>
+
+	</div>
+
+	<footer>
+		<div class="copyright">© 2015 -<span itemprop="copyrightYear">2016</span> | <span class="author" itemprop="copyrightHolder">blackweater</span>
+		</div>
+	</footer>
+	</body>
+</html>
